@@ -1,5 +1,6 @@
 package br.com.dio.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,9 +14,32 @@ public class Board {
 
     private final List<List<Space>> spaces;
 
+    private GameStatusEnum status;
+
     public Board(final List<List<Space>> spaces) {
         this.spaces = spaces;
     }
+
+    public Board(int[][] values, boolean[][] fixedPositions) {
+        this.spaces = new ArrayList<>();
+        for (int row = 0; row < 9; row++) {
+            List<Space> line = new ArrayList<>();
+            for (int col = 0; col < 9; col++) {
+                int value = values[row][col];
+                boolean isFixed = fixedPositions[row][col];
+                Space space = new Space(value, isFixed);
+
+                if (!isFixed && value != 0) {
+                    space.setActual(value);
+                }
+
+                line.add(space);
+            }
+            this.spaces.add(line);
+        }
+
+    }
+
 
     public List<List<Space>> getSpaces() {
         return spaces;
@@ -64,6 +88,14 @@ public class Board {
 
     public boolean gameIsFinished(){
         return !hasErrors() && getStatus().equals(COMPLETE);
+    }
+
+    public Space getSpaceAt(int row, int col) {
+        return spaces.get(row).get(col);
+    }
+
+    public void setStatus(GameStatusEnum status) {
+        this.status = status;
     }
 
 }
